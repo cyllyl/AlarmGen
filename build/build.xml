@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AlarmGen" default="build" basedir="..">
+    <description>
+        AlarmGen build script.
+    </description>
+  
+    <property name="project.name" value="AlarmGen" />
+	<property name="jar.name" value="${project.name}.jar" />
+	<property name="src.java.dir" value="src/java" />
+	<property name="src.lib.dir" value="lib" />
+	<property name="dest.dir" value="release" />
+	<property name="dest.compile.dir" value="${dest.dir}/compile" />
+	<property name="dest.lib.dir" value="${dest.dir}/lib" />
+	<fileset dir="${src.lib.dir}" includes="*.jar" id="src.lib.jars"/>
+	
+	<path id="javac.dependencies">
+		<fileset refid="src.lib.jars"/>
+	</path>
+	
+	<target name="init">
+		<delete dir="${dest.dir}" />
+		<mkdir dir="${dest.compile.dir}"/>
+		<mkdir dir="${dest.lib.dir}"/>
+	</target>
+	
+    <target name="compile" depends="init">
+    	<javac debug="true" debuglevel="lines,vars,source" srcdir="${src.java.dir}" destdir="${dest.compile.dir}">
+    		<compilerarg line="-encoding UTF-8 "/>
+			<classpath>
+				<path refid="javac.dependencies" />
+			</classpath>
+    	</javac>
+    	<copy todir="${dest.compile.dir}">
+			<fileset dir="${src.java.dir}" includes="*.java"/>
+		</copy>
+    	<copy todir="${dest.lib.dir}">
+    		<fileset refid="src.lib.jars"/>
+    	</copy>
+    	<!--<copy todir="${dest.compile.dir}">
+			<fileset dir="${src.rules.dir}" includes="*.drl"/>
+		</copy>     -->
+    </target>
+	
+	<target name="build" depends="compile">
+		<jar jarfile="${dest.dir}/${jar.name}">
+			<fileset dir="${dest.compile.dir}"></fileset>	
+		</jar>	
+		<antcall target="clear" />
+	</target>
+	
+	<target name="clear">
+		<delete dir="${dest.compile.dir}" />
+		
+	</target>
+	
+</project>

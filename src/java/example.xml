@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<configuration >
+    <property name="BASE_PATH" value="./"/> 
+    
+    <appender name="alarmAppender" class="alarm.AlarmAppender">
+	    <file>${BASE_PATH}/logs/alarm/alarmHistory.log</file>
+	    <append>true</append>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> 
+		    <fileNamePattern>${BASE_PATH}/logs/alarm/alarmHistory.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern> 
+ 		    <maxHistory>30</maxHistory>
+ 		    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"> 
+ 		        <maxFileSize>10MB</maxFileSize> 
+		    </timeBasedFileNamingAndTriggeringPolicy> 
+		</rollingPolicy> 
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %msg%n</pattern> 
+        </encoder>
+	    <alarmFileName>${BASE_PATH}/logs/alarm/alarm.log</alarmFileName>
+        <alarmMeter class="alarm.alarmMeter.impl.AlarmMeterImpl">
+        	<key>alarmtest</key> 
+            <alarmAlgorithm class="alarm.alarmAlgorithm.impl.PositiveAlgorithm">
+        		<alarmLevel>MINOR</alarmLevel>
+        	</alarmAlgorithm>   
+        	<alarmAlgorithm class="alarm.alarmAlgorithm.impl.SeriesAlgorithm">
+        	    <alarmLevel>MAJOR</alarmLevel>
+        	    <threshold>5</threshold>
+        	</alarmAlgorithm>   
+        	<alarmAlgorithm class="alarm.alarmAlgorithm.impl.RatioAlgorithm">
+        	    <alarmLevel>CRITICAL</alarmLevel>
+        		<threshold>0.30</threshold>
+        		<duration>1000</duration>
+        	</alarmAlgorithm>       
+        </alarmMeter>
+        <alarmMeter class="alarm.alarmMeter.impl.AlarmMeterImpl">
+        	<key>rangetest</key>
+        	<alarmAlgorithm class="alarm.alarmAlgorithm.impl.RangeAlgorithm">
+        		<alarmLevel>MINOR</alarmLevel>
+        	    <thresholdMin>0.10</thresholdMin>
+        	    <thresholdMax>0.05</thresholdMax>
+        	</alarmAlgorithm>  
+        	<alarmAlgorithm class="alarm.alarmAlgorithm.impl.RangeAlgorithm">
+        		<alarmLevel>MAJOR</alarmLevel>
+        	    <thresholdMin>0.10</thresholdMin>
+        	    <thresholdMax>0.80</thresholdMax>
+        	</alarmAlgorithm>  
+        	<alarmAlgorithm class="alarm.alarmAlgorithm.impl.RangeAlgorithm">
+        		<alarmLevel>CRITICAL</alarmLevel>
+        	    <thresholdMin>0.80</thresholdMin>
+        	    <thresholdMax>1.00</thresholdMax>
+        	</alarmAlgorithm>        
+        </alarmMeter>
+	</appender>
+    
+    <appender name="consol" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level|%msg%n</pattern>     
+        </encoder>
+    </appender>
+    
+	<logger name="alarmLogger" level="debug" additivty="false">
+	    <appender-ref ref="alarmAppender"/>   
+	</logger>
+	
+    <root level="error">
+        <!-- <appender-ref ref="consol"></appender-ref> -->
+    </root>  
+</configuration>
